@@ -100,6 +100,7 @@ background-color: #0056b3;
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;
+ 
 }
 @media(max-width:650px){
   .task-form {
@@ -107,5 +108,8 @@ background-color: #0056b3;
   flex-direction: column;}
   .info-date{
     display: inline-block;
+}
+.date-input{
+  width: 100%;
 }
 }
