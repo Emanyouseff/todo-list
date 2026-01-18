@@ -1,27 +1,102 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 
+export default function TaskForm({ onAddTask }) {
+  const [taskText, setTaskText] = useState("");
 
-export default function TaskForm({onAddTask}) {
-    const [taskText, settaskText] = useState('')
-    const [startDate, setStartDate] = useState('')
-    const [endDate, setEndDate] = useState('')
-    const handleSubmit= (e)=>{
-        e.preventDefault();
-        if(taskText.trim()===''|| startDate===''||endDate==='')return;
-        onAddTask(taskText,startDate,endDate);
-        settaskText('')
-        setStartDate('')
-        setEndDate('')
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    // If user picks a start date after the current end date, keep endDate >= startDate
+    if (startDate && endDate && startDate > endDate) {
+      setEndDate(startDate);
     }
-  return (<>
-  <form onSubmit={handleSubmit} className='task-form'>
-<input type="text" value={taskText} placeholder='Enter A Task....'  onChange={(e)=> settaskText(e.target.value)} className='task-input' />
-<input type="date" value={startDate} onChange={(e)=> setStartDate(e.target.value)} className='date-input' />
-<input type="date" value={endDate} onChange={(e)=> setEndDate(e.target.value)} className='date-input' />
-<button type='submit' className='task-button'> Add task</button>
-  </form>
+    if (error) setError("");
+  }, [startDate, endDate]);
 
-  </>
- 
-  )
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const text = taskText.trim();
+    if (!text || !startDate || !endDate) {
+      setError("Please fill in a task and both dates.");
+      return;
+    }
+    if (startDate > endDate) {
+      setError("Start date cannot be later than end date.");
+      return;
+    }
+
+    onAddTask(text, startDate, endDate);
+    setTaskText("");
+    setStartDate("");
+    setEndDate("");
+    setError("");
+  };
+
+  const isInvalid =
+    taskText.trim() === "" || !startDate || !endDate || startDate > endDate;
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="task-form"
+      aria-label="Add task form"
+    >
+      <label htmlFor="taskText" className="task-label">
+        Task
+      </label>
+      <input
+        id="taskText"
+        type="text"
+        value={taskText}
+        placeholder="Enter a task..."
+        onChange={(e) => setTaskText(e.target.value)}
+        className="task-input"
+      />
+
+      <label htmlFor="startDate" className="task-label">
+        Start date
+      </label>
+      <input
+        id="startDate"
+        type="date"
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
+        className="date-input"
+        max={endDate || ""}
+      />
+
+      <label htmlFor="endDate" className="task-label">
+        End date
+      </label>
+      <input
+        id="endDate"
+        type="date"
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
+        className="date-input"
+        min={startDate || ""}
+      />
+
+      <button type="submit" className="task-button" disabled={isInvalid}>
+        Add task
+      </button>
+
+      {error && (
+        <div
+          className="task-error"
+          role="alert"
+          style={{ color: "crimson", marginTop: "0.5rem" }}
+        >
+          {error}
+        </div>
+      )}
+    </form>
+  );
 }
+
+TaskForm.propTypes = {
+  onAddTask: PropTypes.func.isRequired,
+};
