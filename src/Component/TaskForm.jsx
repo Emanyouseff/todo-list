@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 export default function TaskForm({ onAddTask }) {
   const [taskText, setTaskText] = useState("");
+   const today = new Date().toISOString().split("T")[0];
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -27,7 +28,10 @@ export default function TaskForm({ onAddTask }) {
       setError("Start date cannot be later than end date.");
       return;
     }
-
+ if ( endDate == today ) {
+      setError("End date cannot be less than today");
+      return;
+    } 
     onAddTask(text, startDate, endDate);
     setTaskText("");
     setStartDate("");
@@ -35,9 +39,9 @@ export default function TaskForm({ onAddTask }) {
     setError("");
   };
 
-  const isInvalid =
-    taskText.trim() === "" || !startDate || !endDate || startDate > endDate;
-
+//   const isInvalid =
+//     taskText.trim() === "" || !startDate || !endDate || startDate > endDate;
+// disabled={isInvalid}
   return (
     <form
       onSubmit={handleSubmit}
@@ -77,10 +81,11 @@ export default function TaskForm({ onAddTask }) {
         value={endDate}
         onChange={(e) => setEndDate(e.target.value)}
         className="date-input"
-        min={startDate || ""}
+        min={today}
       />
 
-      <button type="submit" className="task-button" disabled={isInvalid}>
+      <button type="submit" className="task-button" 
+      >
         Add task
       </button>
 

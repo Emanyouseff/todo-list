@@ -30,6 +30,31 @@ export default function TaskItem({ task, complete, Delete, onEdit }) {
           <div className="task-name">
             <p className="task-text">
               {isEditing ? (
+                <div className="edit-container">
+                  <input
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                    className="edit-input"
+                  />
+                  <button className="save-btn" onClick={handleEdit}>
+                    Save
+                  </button>
+                  <button
+                    className="cancel-btn"
+                    onClick={() => {
+                      setEditText(task.text);
+                      setIsEditing(false);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <strong className="font-text">{task.text}</strong>
+              )}
+              {/* {isEditing ? (
                 <input
                   value={editText}
                   onChange={(e) => setEditText(e.target.value)}
@@ -45,9 +70,16 @@ export default function TaskItem({ task, complete, Delete, onEdit }) {
                 >
                   {task.text}
                 </strong>
-              )}
+              )} */}
             </p>
             <div className=" task-action">
+              <button
+                className="edit-btn"
+                onClick={() => setIsEditing(true)}
+                style={{ display: isEditing ? "none" : "inline-block" }}
+              >
+                ✏️
+              </button>
               <button
                 className="complete-btn"
                 onClick={() => complete(task.id)}

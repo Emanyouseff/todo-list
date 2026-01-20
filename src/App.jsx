@@ -1,10 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import TaskForm from "./Component/TaskForm";
 import TaskList from "./Component/TaskList";
 
 function App() {
-  const [Tasts, setTasts] = useState([]);
+  const [Tasts, setTasts] = useState(() => {
+    const savedTasks = localStorage.getItem("tasks");
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(Tasts));
+  }, [Tasts]);
   const addTask = function (taskText, startDate, endDate) {
     const today = new Date();
     const end = new Date(endDate);
